@@ -1,4 +1,4 @@
-package com.example.habitcoach.ui.theme
+package com.example.fitnesstracker.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

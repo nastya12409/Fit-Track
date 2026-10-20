@@ -1,4 +1,4 @@
-package com.example.habitcoach
+package com.example.fitnesstracker
 
 import org.junit.Test
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.habitcoach"
+    namespace = "com.example.fitnesstracker"
     compileSdk {
         version = release(37)
     }

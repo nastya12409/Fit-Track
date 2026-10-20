@@ -1,4 +1,4 @@
-package com.example.habitcoach
+package com.example.fitnesstracker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
