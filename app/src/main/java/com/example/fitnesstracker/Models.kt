@@ -38,7 +38,14 @@ data class SugarLog( //запис про цукор
     val amountGR: Int
 )
 
-
+data class MenuSection(
+    val id: Int,
+    val emoji: String,
+    val title: String,
+    val shortDescription: String,//короткий опис для карточки
+    val fullDescription: String,// повний опис для деталей
+    val features: List<String>//список функцій
+)
 enum class Gender { MALE, FEMALE }
 
 enum class ActivityLevel(val factor: Double) {
