@@ -1,7 +1,5 @@
 package com.example.fitnesstracker
-
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -15,20 +13,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstracker.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,17 +46,47 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen()
+                    //навігація: два маршрути
+                    val navController = rememberNavController()
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = "list"
+                    ) {
+                        //  перший екран
+                        composable("list") {
+                            HomeScreen(navController = navController)
+                        }
+                        // другий екран з аргументом itemId
+                        composable("details/{itemId}") { backStackEntry ->
+                            val itemId =
+                                backStackEntry.arguments?.getString("itemId")?.toInt() ?: 1
+                            DetailScreen(itemId = itemId, navController = navController)
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-//Головний екран: назва, меню з чотирьох розділів
+// Колір картки за id
 @Composable
-fun HomeScreen() {
-    val context = LocalContext.current
+fun sectionColor(id: Int): Color = when (id) {
+    1 -> MaterialTheme.colorScheme.primaryContainer
+    2, 4 -> MaterialTheme.colorScheme.secondaryContainer
+    3 -> MaterialTheme.colorScheme.tertiaryContainer
+    else -> MaterialTheme.colorScheme.surfaceContainerHighest
+}
+
+//головний екран: назва + меню з п'яти розділів
+@Composable
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeViewModel = viewModel()   // ViewModel отримується тут
+) {
+    // Підписка на стан (кожна зміна = перемальовування екрана)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -68,55 +104,120 @@ fun HomeScreen() {
                 .fillMaxWidth()
                 .padding(top = 40.dp, bottom = 24.dp)
         )
-        //чотири вибори
-        MenuCard(
-            emoji = "🍽",
-            title = "Щоденник харчування",
-            description = "Запис калорій, води та цукру",
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            onClick = {
-                Toast.makeText(context, "Потім", Toast.LENGTH_SHORT).show()
-            }
+
+        // Поле пошуку: дія йде у ViewModel, а не в локальний стан
+        OutlinedTextField(
+            value = uiState.searchQuery,
+            onValueChange = { viewModel.onSearchQueryChange(it) },
+            label = { Text("Пошук розділу") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
         )
 
-        MenuCard(
-            emoji = "📝",
-            title = "Замітки",
-            description = "Нотатки про харчування та тренування",
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            onClick = {
-                Toast.makeText(context, "Потім", Toast.LENGTH_SHORT).show()
-            }
-        )
+        // Прапорець завантаження
+        if (uiState.isLoading) {
+            Text(
+                text = "Завантаження...",
+                fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+            // Фільтр за текстом пошуку
+            uiState.sections
+                .filter { it.title.contains(uiState.searchQuery, ignoreCase = true) }
+                .forEach { section ->
+                    MenuCard(
+                        emoji = section.emoji,
+                        title = section.title,
+                        description = section.shortDescription,
+                        containerColor = sectionColor(section.id),
+                        onClick = {
+                            navController.navigate("details/${section.id}")
+                        }
+                    )
+                }
+        }
+    }
+}
 
-        MenuCard(
-            emoji = "🏃",
-            title = "Матеріали про спорт",
-            description = "Статті та поради з тренувань",
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            onClick = {
-                Toast.makeText(context, "Потім", Toast.LENGTH_SHORT).show()
-            }
-        )
-        MenuCard(
-            emoji = "📒",
-            title = "Трекер звичок",
-            description = "Контроль свох звичок",
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            onClick = {
-                Toast.makeText(context, "Потім", Toast.LENGTH_SHORT).show()
-            }
-        )
-        MenuCard(
-            emoji = "⚙️",
-            title = "Налаштування",
-            description = "Профіль, тема та інші параметри",
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            onClick = {
-                Toast.makeText(context, "Потім", Toast.LENGTH_SHORT).show()
-            }
-        )
+// другий екран: деталі обраного розділу
+@Composable
+fun DetailScreen(
+    itemId: Int,
+    navController: NavController,
+    viewModel: HomeViewModel = viewModel()   // той самий екран отримує
+) {
+    // Підписка на стан
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    // Шукаємо потрібний розділ за id
+    val section = uiState.sections.firstOrNull { it.id == itemId }
 
+    if (section == null) {
+        // Якщо не знайшли — показуємо повідомлення
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Розділ не знайдено", fontSize = 18.sp)
+            Button(onClick = { navController.popBackStack() }) {
+                Text("← Назад")
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Кнопка «Назад» у topBar
+            Button(onClick = { navController.popBackStack() }) {
+                Text("← Назад")
+            }
+
+            // Заголовок
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text(text = section.emoji, fontSize = 40.sp)
+                Text(
+                    text = section.title,
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 12.dp)
+                )
+            }
+
+            // Повний опис
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = sectionColor(section.id)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = section.fullDescription,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            // Список функцій розділу
+            Text(
+                text = "Що буде доступно:",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold
+            )
+            section.features.forEach { feature ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "•", fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        text = feature,
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -152,7 +253,6 @@ fun MenuCard(
                 Text(text = emoji, fontSize = 24.sp)
             }
 
-            //назва та опис
             Column(
                 modifier = Modifier
                     .padding(start = 12.dp)
@@ -169,7 +269,6 @@ fun MenuCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
             Text(
                 text = "›",
                 fontSize = 28.sp,
