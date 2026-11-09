@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Трекер звичок</string>
+    <string name="screen_title">Fit-Track</string>
+    <string name="search_section">Пошук розділу</string>
+    <string name="loading">Завантаження...</string>
+    <string name="back">← Назад</string>
+    <string name="section_not_found">Розділ не знайдено</string>
+    <string name="what_available">Що буде доступно:</string>
 </resources>
