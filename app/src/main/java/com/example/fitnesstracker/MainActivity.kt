@@ -1,5 +1,6 @@
 package com.example.fitnesstracker
 import android.os.Bundle
+import androidx.compose.ui.graphics.luminance
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,7 +50,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     //навігація: два маршрути
                     val navController = rememberNavController()
-
                     NavHost(
                         navController = navController,
                         startDestination = "list"
@@ -70,20 +71,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Колір картки за id
-@Composable
-fun sectionColor(id: Int): Color = when (id) {
-    1 -> MaterialTheme.colorScheme.primaryContainer
-    2, 4 -> MaterialTheme.colorScheme.secondaryContainer
-    3 -> MaterialTheme.colorScheme.tertiaryContainer
-    else -> MaterialTheme.colorScheme.surfaceContainerHighest
-}
-
-//головний екран: назва + меню з п'яти розділів
+//головний екран: назва і меню з п'яти розділів
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: HomeViewModel = viewModel()   // ViewModel отримується тут
+    viewModel: HomeViewModel = viewModel() // ViewModel
 ) {
     // Підписка на стан (кожна зміна = перемальовування екрана)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -95,7 +87,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Fit-Track",
+            text = stringResource(R.string.screen_title),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -109,7 +101,7 @@ fun HomeScreen(
         OutlinedTextField(
             value = uiState.searchQuery,
             onValueChange = { viewModel.onSearchQueryChange(it) },
-            label = { Text("Пошук розділу") },
+            label = { Text(stringResource(R.string.search_section)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -117,7 +109,7 @@ fun HomeScreen(
         // Прапорець завантаження
         if (uiState.isLoading) {
             Text(
-                text = "Завантаження...",
+                text = stringResource(R.string.loading),
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -130,7 +122,7 @@ fun HomeScreen(
                         emoji = section.emoji,
                         title = section.title,
                         description = section.shortDescription,
-                        containerColor = sectionColor(section.id),
+                        containerColor = section.containerColor,
                         onClick = {
                             navController.navigate("details/${section.id}")
                         }
@@ -151,13 +143,12 @@ fun DetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     // Шукаємо потрібний розділ за id
     val section = uiState.sections.firstOrNull { it.id == itemId }
-
     if (section == null) {
         // Якщо не знайшли — показуємо повідомлення
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Розділ не знайдено", fontSize = 18.sp)
+            Text(stringResource(R.string.section_not_found), fontSize = 18.sp)
             Button(onClick = { navController.popBackStack() }) {
-                Text("← Назад")
+                Text(stringResource(R.string.back))
             }
         }
     } else {
@@ -169,10 +160,9 @@ fun DetailScreen(
         ) {
             // Кнопка «Назад» у topBar
             Button(onClick = { navController.popBackStack() }) {
-                Text("← Назад")
+                Text(stringResource(R.string.back))
             }
-
-            // Заголовок
+            //заголовок
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 8.dp)
@@ -187,10 +177,10 @@ fun DetailScreen(
                 )
             }
 
-            // Повний опис
+            //повний опис
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = sectionColor(section.id)
+                    containerColor = section.containerColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -201,9 +191,9 @@ fun DetailScreen(
                 )
             }
 
-            // Список функцій розділу
+            //список функцій розділу
             Text(
-                text = "Що буде доступно:",
+                text = stringResource(R.string.what_available),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -229,6 +219,11 @@ fun MenuCard(
     containerColor: Color,
     onClick: () -> Unit
 ) {
+    // Підбір кольору тексту під яскравість картки
+    val textColor =
+        if (containerColor.luminance() > 0.5f) Color.Black.copy(alpha = 0.87f)
+        else Color.White.copy(alpha = 0.95f)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -261,18 +256,19 @@ fun MenuCard(
                 Text(
                     text = title,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = textColor // заголовок: білий/чорний
                 )
                 Text(
                     text = description,
                     fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = textColor.copy(alpha = 0.85f) //опис
                 )
             }
             Text(
                 text = "›",
                 fontSize = 28.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = textColor.copy(alpha = 0.7f)
             )
         }
     }

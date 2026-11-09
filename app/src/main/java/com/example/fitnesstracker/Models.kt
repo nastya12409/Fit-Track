@@ -1,4 +1,7 @@
 package com.example.fitnesstracker
+
+import androidx.compose.ui.graphics.Color
+
 data class UserProfile( //профіль користувача та інформація про нього
     val id: Int = 1,
     val name: String,
@@ -44,7 +47,8 @@ data class MenuSection(
     val title: String,
     val shortDescription: String,//короткий опис для карточки
     val fullDescription: String,// повний опис для деталей
-    val features: List<String>//список функцій
+    val features: List<String>,//список функцій
+    val containerColor: Color   //колір картки (правка рев'юера: колір у моделі)
 )
 enum class Gender { MALE, FEMALE }
 
@@ -80,4 +84,3 @@ fun main() {
         NutritionLog(id = 6, date = "13.10.2026", foodName = "Чорний шоколад", calories = 230, proteins = 3.0, fats = 15.0, carbs = 24.0)
     )
 }
-
