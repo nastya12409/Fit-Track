@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "865711716483",
+    "project_id": "fit-track-46296",
+    "storage_bucket": "fit-track-46296.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865711716483:android:7f0de4460ddab03c3183b6",
+        "android_client_info": {
+          "package_name": "com.example.habitcoach"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVHFqFyqUz98mMs__L4upaBN3IhY9NyI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
