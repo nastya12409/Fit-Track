@@ -11,9 +11,10 @@ import kotlinx.coroutines.launch
 
 // Стан екрана: всі дані, які потрібні для малювання першого екрана
 data class ListUiState(
-    val sections: List<MenuSection> = emptyList(), // список розділів
-    val searchQuery: String = "", // текст пошуку
-    val isLoading: Boolean = true // прапорець завантаження
+    val sections: List<MenuSection> = emptyList(),
+    val searchQuery: String = "",
+    val isLoading: Boolean = true,
+    val errorMessage: String? = null
 )
 
 // Клас ViewModel: «мозг» екрана
@@ -32,11 +33,19 @@ class HomeViewModel(
     }
     private fun loadSections() {
         viewModelScope.launch {
-            val sections = getSectionsUseCase()
-            _uiState.value = ListUiState(
-                sections = sections,
-                isLoading = false
-            )
+            val sections = getSectionsUseCase()   // UseCase без змін
+            _uiState.value = if (sections.isEmpty()) {
+                // Порожній список = не вдалося завантажити
+                ListUiState(
+                    isLoading = false,
+                    errorMessage = "Не вдалося завантажити дані. Перевірте інтернет."
+                )
+            } else {
+                ListUiState(
+                    sections = sections,
+                    isLoading = false
+                )
+            }
         }
     }
     // Дії користувача — методи ViewModel

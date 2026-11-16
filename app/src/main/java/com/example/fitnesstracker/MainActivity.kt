@@ -114,6 +114,16 @@ fun HomeScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
+            // Якщо сталася помилка завантаження — показуємо її
+            val error = uiState.errorMessage
+            if (error != null) {
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 15.sp
+                )
+            }
+
             // Фільтр за текстом пошуку
             uiState.sections
                 .filter { it.title.contains(uiState.searchQuery, ignoreCase = true) }
