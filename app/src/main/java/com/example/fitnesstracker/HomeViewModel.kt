@@ -2,7 +2,6 @@ package com.example.fitnesstracker
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fitnesstracker.data.SectionRepositoryImpl
 import com.example.fitnesstracker.domain.SectionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +18,7 @@ data class ListUiState(
 
 // Клас ViewModel: «мозг» екрана
 class HomeViewModel(
-    private val repository: SectionRepository = SectionRepositoryImpl()
+    private val repository: SectionRepository   // отримуємо з Koin, без налаштувань за замовчуванням
 ) : ViewModel() {
 
     // Приватний стан

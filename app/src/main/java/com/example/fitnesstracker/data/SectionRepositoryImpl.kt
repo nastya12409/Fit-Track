@@ -1,17 +1,19 @@
 package com.example.fitnesstracker.data
 
 import com.example.fitnesstracker.MenuSection
-import com.example.fitnesstracker.data.local.AppDatabase
 import com.example.fitnesstracker.data.local.SectionDao
 import com.example.fitnesstracker.domain.SectionRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
-import com.google.firebase.firestore.Source
+
 // offline-first: читаємо завжди з Room, оновлюємо — з Firestore
+// Залежності (dao, firestore) надає Koin через конструктор
 class SectionRepositoryImpl(
-    private val dao: SectionDao = AppDatabase.getInstance().sectionDao()
+    private val dao: SectionDao,
+    private val firestore: FirebaseFirestore
 ) : SectionRepository {
 
     // Дані йдуть завжди з локальної бази; Flow сам оновить екран після кешування
@@ -20,9 +22,9 @@ class SectionRepositoryImpl(
 
     // Мережа → Room; за помилки кеш залишається як є
     override suspend fun refresh(): Boolean = try {
-        val snapshot = FirebaseFirestore.getInstance()
+        val snapshot = firestore
             .collection(COLLECTION_SECTIONS)
-            .get(Source.SERVER)   // ← тільки сервер: офлайн = помилка, а не кеш Firestore
+            .get(Source.SERVER)   // тільки сервер: офлайн = помилка, а не кеш Firestore
             .await()
 
         // DTO → Entity → запис у кеш

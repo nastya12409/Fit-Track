@@ -32,17 +32,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstracker.ui.theme.MyApplicationTheme
-import com.example.fitnesstracker.data.local.AppDatabase
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppDatabase.init(applicationContext)   // ← додати одразу після super
         setContent {
             MyApplicationTheme {
                 Surface(
@@ -76,7 +75,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: HomeViewModel = viewModel() // ViewModel
+    viewModel: HomeViewModel = koinViewModel() // ViewModel
 ) {
     // Підписка на стан (кожна зміна = перемальовування екрана)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -155,7 +154,7 @@ fun HomeScreen(
 fun DetailScreen(
     itemId: Int,
     navController: NavController,
-    viewModel: HomeViewModel = viewModel()   // той самий екран отримує
+    viewModel: HomeViewModel = koinViewModel()    // той самий екран отримує
 ) {
     // Підписка на стан
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
