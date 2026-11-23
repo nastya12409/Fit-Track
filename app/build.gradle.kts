@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+    id("com.google.devtools.ksp")   // ← нова
 }
 
 android {
@@ -37,6 +38,10 @@ android {
 }
 
 dependencies {
+    // Room — локальна база даних (кеш для offline-first)
+    implementation("androidx.room:room-runtime:2.8.5")
+    implementation("androidx.room:room-ktx:2.8.5")
+    ksp("androidx.room:room-compiler:2.8.5")
     // Compose (BOM керує версіями compose-бібліотек)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

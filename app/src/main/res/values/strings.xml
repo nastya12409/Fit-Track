@@ -6,4 +6,5 @@
     <string name="back">← Назад</string>
     <string name="section_not_found">Розділ не знайдено</string>
     <string name="what_available">Що буде доступно:</string>
+    <string name="no_connection">Немає з\'єднання. Показано збережені дані.</string>
 </resources>

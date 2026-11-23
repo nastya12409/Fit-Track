@@ -38,10 +38,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstracker.ui.theme.MyApplicationTheme
-
+import com.example.fitnesstracker.data.local.AppDatabase
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppDatabase.init(applicationContext)   // ← додати одразу після super
         setContent {
             MyApplicationTheme {
                 Surface(
@@ -106,38 +107,45 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Прапорець завантаження
-        if (uiState.isLoading) {
+        // Прапорець завантаження — тільки якщо кешу ще немає
+        if (uiState.isLoading && uiState.sections.isEmpty()) {
             Text(
                 text = stringResource(R.string.loading),
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-        } else {
-            // Якщо сталася помилка завантаження — показуємо її
-            val error = uiState.errorMessage
-            if (error != null) {
-                Text(
-                    text = error,
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 15.sp
-                )
-            }
+        }
 
-            // Фільтр за текстом пошуку
-            uiState.sections
-                .filter { it.title.contains(uiState.searchQuery, ignoreCase = true) }
-                .forEach { section ->
-                    MenuCard(
-                        emoji = section.emoji,
-                        title = section.title,
-                        description = section.shortDescription,
-                        containerColor = section.containerColor,
-                        onClick = {
-                            navController.navigate("details/${section.id}")
-                        }
+        // Банер: немає мережі — кешований список поруч із попередженням
+        if (uiState.syncError) {
+            Text(
+                text = stringResource(R.string.no_connection),
+                color = MaterialTheme.colorScheme.onErrorContainer,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        shape = RoundedCornerShape(8.dp)
                     )
-                }
+                    .padding(12.dp)
+            )
+        }
+
+        // Список розділів із кешу Room — видно одразу, навіть поки оновлення триває
+        uiState.sections
+            .filter { it.title.contains(uiState.searchQuery, ignoreCase = true) }
+            .forEach { section ->
+                MenuCard(
+                    emoji = section.emoji,
+                    title = section.title,
+                    description = section.shortDescription,
+                    containerColor = section.containerColor,
+                    onClick = {
+                        navController.navigate("details/${section.id}")
+                    }
+                )
+
         }
     }
 }
