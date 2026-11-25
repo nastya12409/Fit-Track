@@ -1,3 +1,62 @@
 <resources>
     <string name="app_name">Трекер звичок</string>
+    <string name="screen_title">Fit-Track</string>
+    <string name="search_section">Пошук розділу</string>
+    <string name="loading">Завантаження...</string>
+    <string name="back">← Назад</string>
+    <string name="section_not_found">Розділ не знайдено</string>
+    <string name="what_available">Що буде доступно:</string>
+    <string name="no_connection">Немає з\'єднання. Показано збережені дані.</string>
+    <!-- Заміри -->
+    <string name="measure_title">Заміри</string>
+    <string name="measure_today">Сьогодні: %1$s</string>
+    <string name="measure_weight">Вага, кг</string>
+    <string name="measure_waist">Талія, см</string>
+    <string name="measure_hips">Стегна, см</string>
+    <string name="measure_add">Додати запис</string>
+    <string name="measure_error_weight">Введіть вагу числом (напр. 65.5)</string>
+    <string name="measure_error_waist">Введіть талію числом (напр. 72)</string>
+    <string name="measure_error_hips">Введіть стегна числом (напр. 96)</string>
+    <string name="measure_progress">Прогрес</string>
+    <string name="measure_progress_first">Додайте ще один запис — і побачите прогрес</string>
+    <string name="measure_progress_line">Проти попереднього запису: вага %1$+.1f кг • талія %2$+.1f см • стегна %3$+.1f см</string>
+    <string name="measure_entries">Усі записи</string>
+    <string name="measure_empty">Ще немає записів — додайте перший</string>
+    <string name="measure_line">Вага %1$.1f кг • талія %2$.1f см • стегна %3$.1f см</string>
+    <string name="measure_delete">Видалити</string>
+    <!-- Щоденник харчування (КБЖУ) -->
+    <string name="food_title">Щоденник харчування</string>
+    <string name="food_today">Сьогодні: %1$s</string>
+    <string name="food_name">Назва страви</string>
+    <string name="food_calories">Калорії, ккал</string>
+    <string name="food_proteins">Білки, г</string>
+    <string name="food_fats">Жири, г</string>
+    <string name="food_carbs">Вуглеводи, г</string>
+    <string name="food_water">Вода, мл</string>
+    <string name="food_sugar">Цукор, г</string>
+    <string name="food_add">Додати запис</string>
+    <string name="food_error_name">Введіть назву страви</string>
+    <string name="food_error_calories">Калорії мають бути цілим числом</string>
+    <string name="food_total">Ітого за день</string>
+    <string name="food_entries">Записи за сьогодні</string>
+    <string name="food_empty">Ще немає записів — додайте перший</string>
+    <string name="food_delete">Видалити</string>
+    <string name="food_line">%1$d ккал • Б%2$d / Ж%3$d / У%4$d • вода %5$d мл • цукр %6$d г</string>
+    <!-- Матеріали про спорт -->
+    <string name="articles_title">Матеріали про спорт</string>
+    <string name="articles_filter_all">Усі</string>
+    <string name="articles_category">Категорія</string>
+    <string name="articles_title_field">Заголовок статті</string>
+    <string name="articles_content_field">Текст статті</string>
+    <string name="articles_save">Зберегти статтю</string>
+    <string name="articles_error_title">Введіть заголовок статті</string>
+    <string name="articles_error_content">Введіть текст статті</string>
+    <string name="articles_heading">Статті</string>
+    <string name="articles_empty">Статей ще немає — додайте першу</string>
+    <string name="articles_empty_filter">У цій категорії поки немає статей</string>
+    <string name="articles_delete">Видалити статтю</string>
+    <string name="article_not_found">Статтю не знайдено</string>
+    <string name="cat_training">Вправи</string>
+    <string name="cat_nutrition">Харчування</string>
+    <string name="cat_recovery">Відновлення</string>
 </resources>
