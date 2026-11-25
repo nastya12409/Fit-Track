@@ -69,7 +69,7 @@ enum class WorkoutType {
     GYM, RUNNING, SWIMMING, YOGA, HOME_WORKOUT, WALKING
 }
 
-
+enum class ArticleCategory { TRAINING, NUTRITION, RECOVERY } // категорії статей (назви — у strings.xml)
 sealed class Result<out T> {
     data class Success<T>(val data: T) : Result<T>()
     data class Error(val message: String) : Result<Nothing>()

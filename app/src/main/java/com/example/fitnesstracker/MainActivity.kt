@@ -54,9 +54,26 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = "list"
                     ) {
-                        //  перший екран
                         composable("list") {
                             HomeScreen(navController = navController)
+                        }
+
+                        composable("food") {
+                            FoodScreen(navController = navController)
+                        }
+                        // маршрут екрана матеріалів про спорт
+                        composable("articles") {
+                            ArticlesScreen(navController = navController)
+                        }
+                        // маршрут екрана замірів
+                        composable("measurements") {
+                            MeasurementsScreen(navController = navController)
+                        }
+                        // екран читання однієї статті (id з URL)
+                        composable("article/{articleId}") { backStackEntry ->
+                            val articleId =
+                                backStackEntry.arguments?.getString("articleId")?.toInt() ?: 1
+                            ArticleDetailScreen(articleId = articleId, navController = navController)
                         }
                         // другий екран з аргументом itemId
                         composable("details/{itemId}") { backStackEntry ->
@@ -141,8 +158,17 @@ fun HomeScreen(
                     description = section.shortDescription,
                     containerColor = section.containerColor,
                     onClick = {
-                        navController.navigate("details/${section.id}")
-                    }
+                        // Щоденник харчування (id = 1) і матеріали (id = 5)
+                        // відкривають власні екрани
+
+                        when (section.id) {
+                                1 -> navController.navigate("food")
+                                4 -> navController.navigate("measurements")
+                                5 -> navController.navigate("articles")
+                                else -> navController.navigate("details/${section.id}")
+                            }
+
+                    },
                 )
 
         }
